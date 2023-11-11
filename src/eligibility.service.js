@@ -8,6 +8,8 @@ class EligibilityService {
    * @return {boolean}
    */
   isEligible(cart, criteria) {
+
+    if (!cart || !criteria) return false;
     
     // Compare shopperId
     let shopperIdBoolean = cart.shopperId === criteria.shopperId
@@ -16,7 +18,7 @@ class EligibilityService {
     let totalAtiBoolean = cart.totalAti > criteria.totalAti.gt
        
     // Compare productId 
-    let productIdBoolean = cart.products.some(product => criteria['products.productId'].in.includes(product.productId)) 
+    let productIdBoolean = Array.isArray(criteria['products.productId'].in) && cart.products.some(product => criteria['products.productId'].in.includes(product.productId)) 
     
     // Convert date to Date object and compare
     let dateBoolean = new Date(cart.date) > new Date(criteria.date.and.gt) && 
@@ -24,7 +26,6 @@ class EligibilityService {
     
     // If all criteria are fulfilled then the cart is eligible so it returns true
     return shopperIdBoolean && totalAtiBoolean && productIdBoolean && dateBoolean;
-
   }
 }
 
